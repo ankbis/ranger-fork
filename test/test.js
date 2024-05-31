@@ -1,6 +1,7 @@
 const assert = require('assert');
 const ranger = require('../');
 const { Range } = require('../');
+const { Calculator } = require('../');
 
 console.log('TESTING RANGER');
 
@@ -78,5 +79,12 @@ assert.equal(range1.contains(10), true);
 assert.equal(range1.containsRange(new Range(-5, 5)), true);
 assert.equal(range1.containsRange(new Range(-11, 5)), false);
 assert.equal(range1.containsRange(new Range(-5, 11)), false);
+
+console.log('TESTING CALCULATOR');
+
+const calculator = new Calculator();
+
+assert.equal(calculator.add(5, 3), 8);
+assert.equal(calculator.multiply(7, 4), 28);
 
 console.log('TEST COMPLETE!');

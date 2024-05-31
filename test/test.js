@@ -1,6 +1,7 @@
 const assert = require('assert');
 const ranger = require('../');
 const { Range } = require('../');
+const { Calculator } = require('../');
 
 console.log('TESTING RANGER');
 
@@ -78,5 +79,19 @@ assert.equal(range1.contains(10), true);
 assert.equal(range1.containsRange(new Range(-5, 5)), true);
 assert.equal(range1.containsRange(new Range(-11, 5)), false);
 assert.equal(range1.containsRange(new Range(-5, 11)), false);
+
+console.log('TESTING CALCULATOR');
+
+const calculator = new Calculator();
+assert.equal(calculator.add(2, 3), 5);
+assert.equal(calculator.subtract(10, 4), 6);
+assert.equal(calculator.sqrt(16), 4);
+
+assert.throws(() => calculator.add('a', 2), Error, 'Invalid input: arguments must be numbers');
+assert.throws(() => calculator.add(2, 'b'), Error, 'Invalid input: arguments must be numbers');
+assert.throws(() => calculator.subtract('a', 2), Error, 'Invalid input: arguments must be numbers');
+assert.throws(() => calculator.subtract(2, 'b'), Error, 'Invalid input: arguments must be numbers');
+assert.throws(() => calculator.sqrt('a'), Error, 'Invalid input: argument must be a number');
+assert.throws(() => calculator.sqrt(-1), Error, 'Invalid input: argument must be non-negative');
 
 console.log('TEST COMPLETE!');

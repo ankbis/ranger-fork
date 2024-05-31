@@ -7,6 +7,7 @@ const babelConfig = {
     ['env']
   ]
 };
+const files = ['src/ranger.js', 'src/Range.js', 'src/Calculator.js'];
 
 export default [
 	{
@@ -24,6 +25,7 @@ export default [
       }))
     ],
 	},
+
 	{
     input: 'src/main.cjs.js',
 		output: {
@@ -41,4 +43,12 @@ export default [
 			}
 		]
 	}
+];
+
+export default [
+  ...defaultConfig,
+  {
+    input: files,
+    output: { file: pkg.browser, format: 'umd', name: 'ranger' }
+  }
 ];

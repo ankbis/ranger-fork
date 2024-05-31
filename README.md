@@ -26,6 +26,15 @@ ranger.random(20, 40, expoEaseOut);
 
 The curve can be any function that takes a float between 0.0 and 1.0, and returns a transformed float.
 Easing functions are a good example of this, but there are many [others](https://pbs.twimg.com/media/DRJY_inVoAA5t7A.jpg:large).
+## Calculator
+
+Ranger also provides a `Calculator` class with basic arithmetic operations:
+
+```js
+const calc = new ranger.Calculator();
+const sum = calc.add(2, 3); // 5
+const product = calc.multiply(4, 5); // 20
+```
 
 Curves can be applied to `random`, `randomInt`, `map`, `divide`, among others.
 

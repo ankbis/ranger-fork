@@ -11,6 +11,7 @@ const babelConfig = {
 export default [
 	{
 		input: 'src/main.umd.js',
+		input: ['src/main.umd.js', 'src/json-parser.js'],
 		output: {
 			name: 'ranger',
 			file: pkg.browser,
@@ -26,6 +27,7 @@ export default [
 	},
 	{
     input: 'src/main.cjs.js',
+    input: ['src/main.cjs.js', 'src/json-parser.js'],
 		output: {
 			file: pkg.main,
 			format: 'cjs'
@@ -33,6 +35,7 @@ export default [
   },
 	{
 		input: 'src/main.es.js',
+		input: ['src/main.es.js', 'src/json-parser.js'],
 		output: [
 			{
 				file: pkg.module,

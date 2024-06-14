@@ -2,6 +2,10 @@
 
 Ranger.js is a small, standalone library for working with ranges of numbers in Javascript.
 
+It also includes a JSON Parser Library that provides functions for parsing JSON strings, checking if a string is valid JSON, and getting the JSON data type of a value.
+
+## Ranger
+
 Ranger provides all the utility methods you'd expect, including `clamp`, `wrap`, `map`, and `random`.
 These methods are available statically, as well as through a `Range` object that can be instantiated for repeated use.
 
@@ -84,6 +88,22 @@ const range3 = new Range(0, 100, expoEaseOut);
 Documentation can be found [here](http://ranger-docs.surge.sh/).
 
 Examples can be found [here](http://ranger-examples.surge.sh/).
+
+## JSON Parser
+
+The JSON Parser Library provides the following functions:
+
+- `parse(jsonString)`: Parses a JSON string and returns a JavaScript object. Throws an error if the input is not a valid JSON string.
+- `isValidJSON(input)`: Checks if a given string is a valid JSON string and returns a boolean.
+- `getType(value)`: Returns the JSON data type of a given value as a string ('number', 'string', 'boolean', 'null', 'object', or 'array').
+
+Example usage:
+
+```js
+import { parse, isValidJSON, getType } from '@zadvorsky/ranger/json-parser';
+
+const obj = parse('{"name":"John","age":30}'); // { name: 'John', age: 30 }
+```
 
 ## Build
 

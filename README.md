@@ -2,6 +2,46 @@
 
 Ranger.js is a small, standalone library for working with ranges of numbers in Javascript.
 
+## Rate Limiting
+
+The application includes a basic rate limiting middleware to prevent abuse and ensure system stability. The rate limiter can be configured to limit the number of requests per time window for a given client or IP address.
+
+### Configuration
+
+The rate limiter is configured with the following options:
+
+- `maxRequests` (default: 100): The maximum number of requests allowed within the time window.
+- `windowMs` (default: 60000): The time window in milliseconds.
+
+To configure the rate limiter, create a new instance of the `RateLimiter` class with the desired options:
+
+```js
+import RateLimiter from './middleware/RateLimiter';
+
+const rateLimiter = new RateLimiter({ maxRequests: 100, windowMs: 60000 });
+```
+
+### Usage
+
+To apply the rate limiter middleware to your application, use the `middleware` method:
+
+```js
+const app = express();
+app.use(rateLimiter.middleware);
+```
+
+When the rate limit is exceeded, the middleware will respond with a `429 Too Many Requests` status code and a `Too Many Requests` message.
+
+### Testing
+
+The rate limiter includes unit tests and integration tests to ensure its correctness. The tests can be found in the `test/RateLimiter.test.js` and `test/integration/RateLimiter.test.js` files.
+
+To run the tests, execute the following command:
+
+```
+npm test
+```
+
 Ranger provides all the utility methods you'd expect, including `clamp`, `wrap`, `map`, and `random`.
 These methods are available statically, as well as through a `Range` object that can be instantiated for repeated use.
 

@@ -1,6 +1,7 @@
 import babel from 'rollup-plugin-babel';
 import babelrc from 'babelrc-rollup';
 import pkg from './package.json';
+import redis from 'redis';
 
 const babelConfig = {
   'presets': [
@@ -10,6 +11,7 @@ const babelConfig = {
 
 export default [
 	{
+		external: ['redis'],
 		input: 'src/main.umd.js',
 		output: {
 			name: 'ranger',
@@ -26,6 +28,7 @@ export default [
 	},
 	{
     input: 'src/main.cjs.js',
+		external: ['redis'],
 		output: {
 			file: pkg.main,
 			format: 'cjs'
@@ -33,6 +36,7 @@ export default [
   },
 	{
 		input: 'src/main.es.js',
+		external: ['redis'],
 		output: [
 			{
 				file: pkg.module,

@@ -1,5 +1,14 @@
 # Ranger
 
+## Rate Limiter Caching
+
+The rate limiter now supports caching of request counts and rate limit information in a Redis cache. This improves the performance and scalability of the rate limiter by reducing the overhead of accessing a database or other persistent storage.
+
+To use the rate limiter caching, you need to have a Redis server running and configure the connection details in the `RateLimiterCache` class.
+
+The cache TTL (time-to-live) is set to 1 minute by default, but you can adjust it as needed.
+# Ranger
+
 Ranger.js is a small, standalone library for working with ranges of numbers in Javascript.
 
 Ranger provides all the utility methods you'd expect, including `clamp`, `wrap`, `map`, and `random`.

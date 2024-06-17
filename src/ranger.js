@@ -3,6 +3,8 @@
  */
 const ranger = {
 
+  cache: new (require('./RateLimiterCache'))(),
+
   /**
    * Default curve, which is just a pass-through function.
    *
@@ -47,6 +49,11 @@ const ranger = {
    * @returns {number} - Position of the supplied value.
    */
   getPosition(x, min, max, curve = ranger.LINEAR) {
+    const cacheKey = `getPosition_${x}_${min}_${max}_${curve.name}`;
+    const cachedValue = await ranger.cache.get(cacheKey);
+    if (cachedValue) {
+      return cachedValue;
+    }
     return curve((x - min) / ranger.length(min, max));
   },
 
@@ -61,6 +68,11 @@ const ranger = {
    * @returns {*} - Value at the supplied position.
    */
   getValue(x, min, max, curve = ranger.LINEAR) {
+    const cacheKey = `getValue_${x}_${min}_${max}_${curve.name}`;
+    const cachedValue = await ranger.cache.get(cacheKey);
+    if (cachedValue) {
+      return cachedValue;
+    }
     return min + curve(x) * ranger.length(min, max);
   },
 
@@ -78,6 +90,11 @@ const ranger = {
    * @returns {Number} - The mapped value, between targetRange.min and targetRange.max.
    */
   map(x, sourceRange, targetRange, curve = ranger.LINEAR) {
+    const cacheKey = `map_${x}_${sourceRange.min}_${sourceRange.max}_${targetRange.min}_${targetRange.max}_${curve.name}`;
+    const cachedValue = await ranger.cache.get(cacheKey);
+    if (cachedValue) {
+      return cachedValue;
+    }
     return ranger.getValue(sourceRange.getPosition(x, ranger.LINEAR), targetRange.min, targetRange.max, curve);
   },
 
@@ -95,6 +112,11 @@ const ranger = {
    * @returns {number} - The mapped value, between targetMin and targetMax.
    */
   mapFloat(x, sourceMin, sourceMax, targetMin, targetMax, curve = ranger.LINEAR) {
+    const cacheKey = `mapFloat_${x}_${sourceMin}_${sourceMax}_${targetMin}_${targetMax}_${curve.name}`;
+    const cachedValue = await ranger.cache.get(cacheKey);
+    if (cachedValue) {
+      return cachedValue;
+    }
     return ranger.getValue(ranger.getPosition(x, sourceMin, sourceMax, ranger.LINEAR), targetMin, targetMax, curve);
   },
 
@@ -108,7 +130,17 @@ const ranger = {
    * @param {function} [curve] - The curve function to apply.
    * @returns {number}
    */
+    const cacheKey = `randomInt_${min}_${max}_${curve.name}`;
+    const cachedValue = await ranger.cache.get(cacheKey);
+    if (cachedValue) {
+      return cachedValue;
+    }
   random(min, max, curve = ranger.LINEAR) {
+    const cacheKey = `random_${min}_${max}_${curve.name}`;
+    const cachedValue = await ranger.cache.get(cacheKey);
+    if (cachedValue) {
+      return cachedValue;
+    }
     return min + curve(Math.random()) * ranger.length(min, max);
   },
 
@@ -179,5 +211,20 @@ const ranger = {
     return ranger.contains(sourceRange.min, targetRange.min, targetRange.max) && ranger.contains(sourceRange.max, targetRange.min, targetRange.max);
   },
 };
+
+// Cache the results of the rate limiting functions
+const cacheTTL = 60; // 1 minute
+const rateLimitingFunctions = ['getPosition', 'getValue', 'map', 'mapFloat', 'random', 'randomInt'];
+rateLimitingFunctions.forEach(funcName => {
+  const originalFunc = ranger[funcName];
+  ranger[funcName] = async (...args) => {
+    const cacheKey = `${funcName}_${args.join('_')}`;
+    const cachedValue = await ranger.cache.get(cacheKey);
+    if (cachedValue) return cachedValue;
+    const result = await originalFunc.apply(ranger, args);
+    ranger.cache.set(cacheKey, result, cacheTTL);
+    return result;
+  };
+});
 
 export default ranger;

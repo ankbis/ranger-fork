@@ -28,5 +28,6 @@
   },
   "files": [
     "dist"
+    "src/RateLimiterCache.js"
   ]
 }

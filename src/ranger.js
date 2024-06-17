@@ -1,5 +1,7 @@
 /**
  * @namespace
+ * @property {function} logRateLimitViolation - Logs a rate limit violation
+ * @property {object} metrics - Tracks rate limiter performance metrics
  */
 const ranger = {
 
@@ -179,5 +181,37 @@ const ranger = {
     return ranger.contains(sourceRange.min, targetRange.min, targetRange.max) && ranger.contains(sourceRange.max, targetRange.min, targetRange.max);
   },
 };
+
+// Rate Limiter Logging
+ranger.logRateLimitViolation = (endpoint, userId, timestamp) => {
+  console.log(`Rate limit violation: ${endpoint} by ${userId} at ${timestamp}`);
+  // TODO: Integrate with logging service or file
+};
+
+// Rate Limiter Performance Metrics
+ranger.metrics = {
+  hitCount: 0,
+  missCount: 0,
+  cacheHitCount: 0,
+
+  updateHitRate: (count) => {
+    ranger.metrics.hitCount += count;
+  },
+
+  updateMissRate: (count) => {
+    ranger.metrics.missCount += count;
+  },
+
+  updateCacheHitRate: (count) => {
+    ranger.metrics.cacheHitCount += count;
+  },
+
+  getRateLimiterMetrics: () => ({
+    hitRate: ranger.metrics.hitCount / (ranger.metrics.hitCount + ranger.metrics.missCount) || 0,
+    missRate: ranger.metrics.missCount / (ranger.metrics.hitCount + ranger.metrics.missCount) || 0,
+    cacheHitRate: ranger.metrics.cacheHitCount / (ranger.metrics.hitCount + ranger.metrics.missCount) || 0,
+  }),
+};
+
 
 export default ranger;

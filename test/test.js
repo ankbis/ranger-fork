@@ -1,6 +1,7 @@
 const assert = require('assert');
 const ranger = require('../');
 const { Range } = require('../');
+const RateLimiterCache = require('../src/RateLimiterCache');
 
 console.log('TESTING RANGER');
 
@@ -78,5 +79,26 @@ assert.equal(range1.contains(10), true);
 assert.equal(range1.containsRange(new Range(-5, 5)), true);
 assert.equal(range1.containsRange(new Range(-11, 5)), false);
 assert.equal(range1.containsRange(new Range(-5, 11)), false);
+
+// Test RateLimiterCache
+const cache = new RateLimiterCache();
+cache.set('key1', 'value1', 1);
+assert.equal(await cache.get('key1'), 'value1');
+setTimeout(async () => {
+  assert.equal(await cache.get('key1'), null);
+}, 1500);
+cache.delete('key2');
+assert.equal(await cache.get('key2'), null);
+cache.clear();
+assert.equal(await cache.get('key1'), null);
+
+// Test caching of rate limiting functions
+const result1 = await ranger.getPosition(10, 0, 100);
+const result2 = await ranger.getPosition(10, 0, 100);
+assert.strictEqual(result1, result2); // Cached result should be the same
+
+const result3 = await ranger.random(0, 100);
+const result4 = await ranger.random(0, 100);
+assert.notStrictEqual(result3, result4); // Random values should be different
 
 console.log('TEST COMPLETE!');

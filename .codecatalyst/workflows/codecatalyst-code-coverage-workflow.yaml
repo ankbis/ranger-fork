@@ -1,0 +1,58 @@
+Name: codecatalyst-code-coverage-workflow
+SchemaVersion: 1.0
+
+Triggers:
+  - Type: PUSH
+    Branches:
+      - main
+
+Actions:
+  Test:
+    Identifier: aws/managed-test@v1
+    Inputs:
+      Sources:
+        - WorkflowSource
+    Outputs:
+      Reports:
+        CoverageReport:
+          Format: CLOVERXML
+          IncludePaths:
+            - "coverage/*"
+        TestReport:
+          Format: JUNITXML
+          IncludePaths:
+            - junit.xml
+    Configuration:
+      Steps:
+        - Run: npm install
+        - Run: npm run test
+
+  ScanWithCodeGuruSecurity:
+    Identifier: codecatalyst-labs/scan-with-codeguru-security@v1
+    DependsOn:
+      - Test
+    Environment:
+      Name: codecatalyst-cfn-environment
+      Connections:
+        - Name: codecatalyst-account-connection
+          Role: codecatalyst-codeguru-security-role
+    Inputs:
+      Sources:
+        - WorkflowSource
+    Configuration:
+      Path: src
+      GenerateReport: true
+      AWSRegion: us-west-2
+
+  PublishCodeCoverageReport:
+    Identifier: aws/publish-code-coverage-report@v1
+    DependsOn:
+      - ScanWithCodeGuruSecurity
+    Environment:
+      Name: codecatalyst-cfn-environment
+      Connections:
+        - Name: codecatalyst-account-connection
+          Role: codecatalyst-codeguru-security-role
+    Inputs:
+      Artifacts:
+        - CoverageReport

@@ -1,6 +1,6 @@
 import { TweenMax } from 'gsap';
 import guify from './lib/guify.min';
-import ranger, { Range } from '../../../../dist/ranger.esm';
+import ranger, { Range, parseJSON } from '../../../../dist/ranger.esm';
 import BaseApp from './core/BaseApp';
 import RandomPosition from "./examples/RandomPosition";
 import MapPosition from "./examples/MapPosition";
@@ -17,7 +17,8 @@ export default class App extends BaseApp {
     'Divide': Divide,
     'Particle Timing': ParticleTiming,
     'Color': Color,
-    'Wrap': Wrap
+    'Wrap': Wrap,
+    'JSON Parser': JSONParserExample
   };
 
   static exampleKeys = Object.keys(App.exampleMap);
@@ -86,5 +87,24 @@ export default class App extends BaseApp {
     this.setRootNode(this.example);
 
     this.elDiscription.innerHTML = this.example.description;
+  }
+}
+
+class JSONParserExample extends BaseExample {
+  description = 'This example demonstrates the JSON parser library.';
+
+  createGraphics() {
+    const jsonString = '{"name": "John", "age": 30, "city": "New York"}';
+    const parsedObject = parseJSON(jsonString);
+    console.log(parsedObject);
+  }
+
+  createOptions() {
+    this.createRangeInput('jsonString', 'JSON String', '', '', '');
+  }
+
+  update() {
+    const parsedObject = parseJSON(this.state.jsonString);
+    console.log(parsedObject);
   }
 }

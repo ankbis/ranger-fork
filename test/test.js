@@ -1,6 +1,7 @@
 const assert = require('assert');
 const ranger = require('../');
 const { Range } = require('../');
+const { parseJSON } = require('../');
 
 console.log('TESTING RANGER');
 
@@ -79,4 +80,24 @@ assert.equal(range1.containsRange(new Range(-5, 5)), true);
 assert.equal(range1.containsRange(new Range(-11, 5)), false);
 assert.equal(range1.containsRange(new Range(-5, 11)), false);
 
+console.log('TESTING JSON PARSER');
+
+const validJSON = '{"name": "John", "age": 30, "city": "New York"}';
+const parsedObject = parseJSON(validJSON);
+assert.deepEqual(parsedObject, { name: 'John', age: 30, city: 'New York' });
+
+const nestedJSON = '{"person": {"name": "John", "age": 30}, "address": {"city": "New York", "country": "USA"}}';
+const parsedNestedObject = parseJSON(nestedJSON);
+assert.deepEqual(parsedNestedObject, { person: { name: 'John', age: 30 }, address: { city: 'New York', country: 'USA' } });
+
+const invalidJSON = '{"name": "John", "age": 30,}';
+try {
+  parseJSON(invalidJSON);
+} catch (error) {
+  assert.ok(error instanceof Error);
+}
+
 console.log('TEST COMPLETE!');
+
+
+
